@@ -35,8 +35,8 @@
 
 #include "lttng-vmsync.h"
 
-DEFINE_TRACE(vmsync_hg_guest);
-DEFINE_TRACE(vmsync_gh_guest);
+DEFINE_TRACE(vmsync_hg_guest, TP_PROTO(unsigned int cnt, unsigned long vm_uid), TP_ARGS(cnt, vm_uid));
+DEFINE_TRACE(vmsync_gh_guest, TP_PROTO(unsigned int cnt, unsigned long vm_uid), TP_ARGS(cnt, vm_uid));
 
 #define VMSYNC_HRTIMER_INTERVAL (10LL * NSEC_PER_MSEC)
 #define RATE_LIMIT 3
@@ -79,7 +79,7 @@ static int __init lttng_addons_vmsync_init(void)
 	get_random_bytes(&vm_uid, sizeof(vm_uid));
 
 	(void) wrapper_lttng_fixup_sig(THIS_MODULE);
-	ret = lttng_wrapper_tracepoint_probe_register("softirq_exit",
+	ret = lttng_tracepoint_probe_register("softirq_exit",
 			softirq_exit_handler, NULL);
 	if (ret) {
 			printk(VMSYNC_INFO "tracepoint_probe_register softirq_exit failed\n");
@@ -95,14 +95,14 @@ module_init(lttng_addons_vmsync_init);
 
 static void __exit lttng_addons_vmsync_exit(void)
 {
-	lttng_wrapper_tracepoint_probe_unregister("softirq_exit",
+	lttng_tracepoint_probe_unregister("softirq_exit",
 			softirq_exit_handler, NULL);
 
 	/*
 	 * make sure any currently running probe
 	 * has finished before freeing memory
 	 */
-	synchronize_sched();
+	synchronize_rcu();
 	printk(VMSYNC_INFO "removed count=%d for vm_uid %lu\n", count, vm_uid);
 }
 module_exit(lttng_addons_vmsync_exit);
