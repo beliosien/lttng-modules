@@ -9,7 +9,7 @@ obj-$(CONFIG_LTTNG) += src/
 
 else # KERNELRELEASE
 
-# This part of the Makefile is used when the 'make' command is runned in the
+# This part of the Makefile is used when the 'make' command is run in the
 # base directory of the lttng-modules sources. It sets some environment and
 # calls the kernel build system to build the actual modules.
 
@@ -25,7 +25,13 @@ ifeq ($(CONFIG_LTTNG_EXPERIMENTAL_BITWISE_ENUM),y)
 LKCPPFLAGS += -DCONFIG_LTTNG_EXPERIMENTAL_BITWISE_ENUM=y
 endif
 
-default: modules
+# Adding path to the include folder
+LKCPPFLAGS += -I$(PWD)/include -I$(PWD)/scripts
+
+default: print_flags modules
+
+print_flags:
+	@echo $(LKCPPFLAGS)
 
 modules:
 	$(MAKE) -C $(KERNELDIR) M=$(PWD)/src \

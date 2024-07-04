@@ -25,12 +25,12 @@
 #include <linux/hrtimer.h>
 #include <linux/random.h>
 #include <linux/time.h>
-#include <lttng-tracer.h>
+#include <lttng/tracer.h>
 
 //#include "../wrapper/tracepoint.h"
 //#include "../lttng-abi.h"
 #define LTTNG_INSTRUMENTATION
-#include <instrumentation/events/lttng-module/addons.h>
+#include <instrumentation/events/addons.h>
 #include <wrapper/tracepoint.h>
 
 #include "lttng-vmsync.h"

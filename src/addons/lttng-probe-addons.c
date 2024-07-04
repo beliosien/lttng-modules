@@ -21,16 +21,16 @@
  */
 
 #include <linux/module.h>
-#include <lttng-tracer.h>
+#include <lttng/tracer.h>
 
 /*
  * Create LTTng tracepoint probes.
  */
 #define LTTNG_PACKAGE_BUILD
 #define CREATE_TRACE_POINTS
-#define TRACE_INCLUDE_PATH instrumentation/events/lttng-module
+#define TRACE_INCLUDE_PATH instrumentation/events
 
-#include <instrumentation/events/lttng-module/addons.h>
+#include <instrumentation/events/addons.h>
 
 MODULE_LICENSE("GPL and additional rights");
 MODULE_AUTHOR("Mathieu Desnoyers <mathieu.desnoyers@efficios.com>");
