@@ -26,12 +26,15 @@ LKCPPFLAGS += -DCONFIG_LTTNG_EXPERIMENTAL_BITWISE_ENUM=y
 endif
 
 # Adding path to the include folder
-LKCPPFLAGS += -I$(PWD)/include -I$(PWD)/scripts
+LKCPPFLAGS += -I$(PWD)/include -I$(PWD)/scripts -I$(PWD)/instrumentation
 
 default: print_flags modules
 
+# Messages de débogage
 print_flags:
 	@echo $(LKCPPFLAGS)
+	@echo "PWD: $(PWD)"
+	@echo "Include paths: $(LKCPPFLAGS)"
 
 modules:
 	$(MAKE) -C $(KERNELDIR) M=$(PWD)/src \

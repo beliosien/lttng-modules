@@ -2,12 +2,12 @@
 # Makefile for the LTT probes.
 # Only build from the package top-level directory. Never use with make directly.
 
-TOP_LTTNG_MODULES_DIR := $(shell dirname $(lastword $(MAKEFILE_LIST)))/..
+TOP_LTTNG_MODULES_DIR := $(shell dirname $(lastword $(MAKEFILE_LIST)))/../..
 
-include $(TOP_LTTNG_MODULES_DIR)/Kbuild.common
+include $(TOP_LTTNG_MODULES_DIR)/src/Kbuild.common
 
 ccflags-y += -I$(TOP_LTTNG_MODULES_DIR)
-ccflags-y += -I$(TOP_LTTNG_MODULES_DIR)/addons
+ccflags-y += -I$(TOP_LTTNG_MODULES_DIR)/src/addons
 
 obj-$(CONFIG_LTTNG) += lttng-probe-addons.o
 obj-$(CONFIG_LTTNG) += lttng-vmsync-guest.o
