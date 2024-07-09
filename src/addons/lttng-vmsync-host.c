@@ -23,20 +23,20 @@
 #include <linux/module.h>
 #include <linux/printk.h>
 #include <asm/ptrace.h>
-#include <lttng-tracer.h>
+#include <lttng/tracer.h>
 #include <linux/list.h>
 #include <linux/slab.h>
 
 #include <wrapper/tracepoint.h>
-#include "../wrapper/kallsyms.h"
-#include "../lttng-abi.h"
+#include <wrapper/kallsyms.h>
+#include <lttng/abi.h>
 #define LTTNG_INSTRUMENTATION
-#include <instrumentation/events/lttng-module/addons.h>
+#include <instrumentation/events/addons.h>
 
 #include "lttng-vmsync.h"
 
-DEFINE_TRACE(vmsync_gh_host);
-DEFINE_TRACE(vmsync_hg_host);
+DEFINE_TRACE(vmsync_gh_host, TP_PROTO(unsigned int cnt, unsigned long vm_uid), TP_ARGS(cnt, vm_uid));
+DEFINE_TRACE(vmsync_hg_host, TP_PROTO(unsigned int cnt, unsigned long vm_uid), TP_ARGS(cnt, vm_uid));
 
 static LIST_HEAD(nodes_list);
 
@@ -124,15 +124,15 @@ static int __init lttng_addons_vmsync_init(void)
 {
 	int ret;
 
-	(void) wrapper_lttng_fixup_sig(THIS_MODULE);
-	ret = lttng_wrapper_tracepoint_probe_register("kvm_hypercall",
+	//(void) wrapper_lttng_fixup_sig(THIS_MODULE);
+	ret = lttng_tracepoint_probe_register("kvm_hypercall",
 			kvm_hypercall_handler, NULL);
 	if (ret) {
 		printk(VMSYNC_INFO "tracepoint_probe_register kvm_hypercall failed\n");
 		return -1;
 	}
 
-	ret = lttng_wrapper_tracepoint_probe_register("kvm_entry",
+	ret = lttng_tracepoint_probe_register("kvm_entry",
 			kvm_entry_handler, NULL);
 	if (ret) {
 		printk(VMSYNC_INFO "tracepoint_probe_register kvm_entry failed\n");
@@ -147,15 +147,15 @@ module_init(lttng_addons_vmsync_init);
 static void __exit lttng_addons_vmsync_exit(void)
 {
 
-	lttng_wrapper_tracepoint_probe_unregister("kvm_hypercall",
+	lttng_tracepoint_probe_unregister("kvm_hypercall",
 			kvm_hypercall_handler, NULL);
-	lttng_wrapper_tracepoint_probe_unregister("kvm_entry",
+	lttng_tracepoint_probe_unregister("kvm_entry",
 			kvm_entry_handler, NULL);
 	/*
 	 * make sure any currently running probe
 	 * has finished before freeing memory
 	 */
-	synchronize_sched();
+	synchronize_rcu();
 	free_list();
 	printk(VMSYNC_INFO "removed\n");
 }

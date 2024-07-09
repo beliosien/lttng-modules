@@ -78,7 +78,7 @@ static int __init lttng_addons_vmsync_init(void)
 
 	get_random_bytes(&vm_uid, sizeof(vm_uid));
 
-	(void) wrapper_lttng_fixup_sig(THIS_MODULE);
+	//(void) wrapper_lttng_fixup_sig(THIS_MODULE);
 	ret = lttng_tracepoint_probe_register("softirq_exit",
 			softirq_exit_handler, NULL);
 	if (ret) {
